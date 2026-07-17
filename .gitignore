@@ -1,0 +1,13 @@
+# Secrets — never commit API tokens
+.env
+*.env
+
+# Build artifacts
+skills/*.zip
+
+# Python
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store

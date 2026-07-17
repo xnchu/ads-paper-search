@@ -68,7 +68,14 @@ def request(method, path, token, params=None, body=None):
             return json.load(resp)
     except urllib.error.HTTPError as e:
         detail = e.read().decode(errors="replace")[:500]
-        sys.exit(f"error: HTTP {e.code} from ADS API: {detail}")
+        if "not in allowlist" in detail or e.headers.get("x-deny-reason"):
+            sys.exit(f"error: HTTP {e.code} — blocked by this environment's "
+                     f"network egress proxy, NOT by ADS: {detail}\n"
+                     "Fix: allow the domain api.adsabs.harvard.edu in the "
+                     "sandbox network settings (on claude.ai: Settings > "
+                     "Capabilities > Allow network egress > Additional "
+                     "allowed domains).")
+        sys.exit(f"error: HTTP {e.code} from the ADS API: {detail}")
 
 
 def print_docs(docs, as_json):

@@ -40,7 +40,7 @@ directory). Add `--json` for raw JSON, `-h` for full options.
 |------|---------|
 | Search papers | `search 'QUERY' --rows 10 --sort "citation_count desc"` |
 | Search with abstracts | `search 'QUERY' --abstract` |
-| Look up bibcode(s) | `get 2016SSRv..199....5B [more...]` |
+| Look up bibcode(s), incl. arXiv ID | `get 2016SSRv..199....5B [more...]` (prints `arXiv:<id>` or `arXiv: none`; `--json` has the full `identifier` list) |
 | BibTeX export | `export bibtex 2016SSRv..199....5B [more...]` |
 | Papers citing X | `citations BIBCODE --rows 25` |
 | Papers cited by X | `references BIBCODE --rows 25` |

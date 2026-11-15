@@ -25,6 +25,16 @@ import urllib.request
 
 API_BASE = "https://api.adsabs.harvard.edu/v1"
 DEFAULT_FIELDS = "bibcode,title,author,year,pub,citation_count,doi,abstract"
+# `get` resolves a paper, so it also returns all identifiers (arXiv ID etc.).
+GET_FIELDS = DEFAULT_FIELDS + ",identifier"
+
+
+def arxiv_id(doc):
+    """The arXiv ID from a doc's identifier list, e.g. 'astro-ph/0401467', or None."""
+    for ident in doc.get("identifier") or []:
+        if ident.startswith("arXiv:"):
+            return ident[len("arXiv:"):]
+    return None
 
 
 TOKEN_FILE = os.path.expanduser("~/.ads/token")
@@ -92,6 +102,11 @@ def print_docs(docs, as_json):
         doi = d.get("doi")
         if doi:
             line2_parts.append("doi:" + doi[0])
+        arxiv = arxiv_id(d)
+        if arxiv:
+            line2_parts.append("arXiv:" + arxiv)
+        elif "identifier" in d:
+            line2_parts.append("arXiv: none")
         print(f"[{d.get('bibcode', '?')}] {title}")
         if author_str:
             print(f"    {author_str}")
@@ -208,6 +223,7 @@ def main():
     sp = sub.add_parser("get", help="fetch metadata for bibcodes")
     sp.add_argument("bibcodes", nargs="+")
     add_common(sp)
+    sp.set_defaults(fields=GET_FIELDS)
 
     sp = sub.add_parser("export", help="export citations")
     sp.add_argument("format", choices=["bibtex", "bibtexabs", "aastex", "ris",
